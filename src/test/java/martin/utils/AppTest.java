@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class AppTest {
@@ -92,9 +91,9 @@ public class AppTest {
 				for (int k = 0; k < skillsPerTeam; k++) {
 					double[] drill = possibleDrills.get(i)[j];
 					double skill = drill[k];
-					double currentDistance = distanceInAMinute(skill, drillsUsedCounts[i] + 1, status.teamBySkill[j][k]);
+					double currentDistance = distanceInAMinute(skill, drillsUsedCounts[i], status.teamBySkill[j][k]);
 					averageDistancePerMinute += Math.max(0,  currentDistance * timeForDrill[i]);
-					System.out.printf("%.2f,", distanceInAMinute(skill, drillsUsedCounts[i] + 1, status.teamBySkill[j][k]));
+					System.out.printf("%.2f,", distanceInAMinute(skill, drillsUsedCounts[i], status.teamBySkill[j][k]));
 				}
 				System.out.print("}");
 			}
@@ -122,7 +121,7 @@ public class AppTest {
 		}
 		public boolean add(Integer toAdd) {
 			timeTaken += timeForDrill[toAdd];
-			int drillCount = 1;
+			int drillCount = 0;
 			for (Integer step: this) {
 				if (step.equals(toAdd)) {
 					drillCount++;
