@@ -1,0 +1,20 @@
+ public static boolean isReachable(int index, Skill[] skills, Drill[] drills) {// index = the number of the skill that you are testing to see if it can be reached.
+        boolean reachable = false;
+        Skill skill = skills[index];
+        int minimum = skill.getSkillValue();
+
+        for (int j = 0; j < drills.length; j++) {// for each drill
+            int iterations = 0;// iterations = 0
+            while (iterations < 10000) {
+                minimum += drills[j].getImprovementValue(index);
+                if (minimum >= skill.getMinimum()) {
+                    reachable = true;
+                    break;
+                }
+                drills[j].decaySingle(index);
+                iterations++;
+            }
+        }
+
+        return reachable;
+    }
