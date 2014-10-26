@@ -110,6 +110,7 @@ public class App {
 			// if so, we've found one that will finish the practice, go to special case
 			// sloppy check for 0, since we could have precision problems
 			if (averageDistancePerMinute < ALMOST_ZERO) {
+				System.out.println("\nFound end will now find best ending drill.");
 				return bestEndDrill(drillsUsedCounts, status);
 			}
 			if (averageDistancePerMinute < lowestDistance) {
@@ -135,7 +136,7 @@ public class App {
 			// this is a candidate for the best ending
 			if (averageDistancePerMinute < ALMOST_ZERO) {
 				for (int j = 0; j < numberOfTeams; j++) {
-//					System.out.print("{");
+					System.out.print("{");
 					for (int k = 0; k < skillsPerTeam; k++) {
 						double[] drillForPosition = possibleDrills.get(i)[j];
 						double skill = drillForPosition[k];
@@ -145,7 +146,7 @@ public class App {
 							bestDrillNumbers[j][k] = i;
 						}
 					}
-//					System.out.print("}");
+					System.out.print("}");
 				}
 			}
 		}
