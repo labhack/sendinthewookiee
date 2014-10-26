@@ -41,9 +41,9 @@ public class App {
     public static void main(String[] args) throws IOException {
     	String fileName = args.length == 0 ? "defaults.json" : args[0];
     	Gson gson = new Gson();
-    	properties = new Properties();
+//    	properties = new Properties();
     	properties = gson.fromJson(new String(Files.readAllBytes(Paths.get(fileName)), "UTF-8"), Properties.class);
-    	System.out.println(gson.toJson(properties));
+//    	System.out.println(gson.toJson(properties));
         Steps bestPath = bestPath();
         System.out.println("Best path: " + StringUtils.join(bestPath) + ", time taken: " + bestPath.getTimeTaken());
     }
