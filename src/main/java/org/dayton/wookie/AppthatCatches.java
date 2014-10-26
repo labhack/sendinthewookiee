@@ -33,7 +33,7 @@ public class App {
     public static void main(String[] args) throws Exception {
         for (int i = 0; i < 12; i++) {
            if(!(isReachable(teamMembers, i, possibleDrillsArray))){
-               throw new Exception();
+               throw new Exception("Invalid input, unreachable minimum skill level (YOU FOOL!)");
            }
         }
         Steps bestPath = bestPath();
