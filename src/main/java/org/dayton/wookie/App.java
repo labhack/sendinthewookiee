@@ -41,12 +41,44 @@ public class App {
     public static void main(String[] args) throws IOException {
     	String fileName = args.length == 0 ? "defaults.json" : args[0];
     	Gson gson = new Gson();
-//    	properties = new Properties();
     	properties = gson.fromJson(new String(Files.readAllBytes(Paths.get(fileName)), "UTF-8"), Properties.class);
-//    	System.out.println(gson.toJson(properties));
+    	for (int i = 0; i < 12; i++) {
+            if(!(isReachable(properties.teamMembers, i, properties.possibleDrillsArray))){
+                throw new RuntimeException("Invalid input, unreachable minimum skill level (YOU FOOL!)");
+            }
+         }
         Steps bestPath = bestPath();
         System.out.println("Best path: " + StringUtils.join(bestPath) + ", time taken: " + bestPath.getTimeTaken());
     }
+    
+    /*
+    Can the indexed team member's skill ever reach its minimum?
+    goal = minimum value
+    */
+   public static boolean isReachable(double[][] teamMembers, int index, double[][][] drills) {// index = the number of the skill that you are testing to see if it can be reached. Goes from 0-11 atm since there are 12 skills.
+       boolean reachable = false;
+       double[] teamMember = teamMembers[index / 3];
+       int teamMemberValue = index % 3;
+       double goal = teamMember[teamMemberValue];
+
+       for (int j = 0; j < drills.length; j++) {// for each drill
+           double drillValue = drills[j][index / 3][teamMemberValue];
+           int iterations = 0;// iterations = 0
+           while (iterations < 10000) {
+               goal += drillValue;
+               if (goal >= properties.minimum) {
+                   reachable = true;
+                   break;
+               }
+               drillValue *= 0.95;
+               iterations++;
+           }
+
+       }
+
+       return reachable;
+   }
+
 
     private static void reinitialize() {
     }
