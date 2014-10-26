@@ -2,14 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>martin</groupId>
-	<artifactId>martin-utils</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<groupId>code-for-dayton</groupId>
+	<artifactId>wookie</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>martin-utils</name>
-	<url>http://maven.apache.org</url>
-
+	<name>wookie</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -44,40 +42,6 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>objectweb</id>
-			<name>Objectweb repository</name>
-			<url>http://maven.objectweb.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>jboss</id>
-			<name>JBoss Maven2 repository</name>
-			<url>http://repository.jboss.com/maven2/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</repository>
-		<repository>
-			<id>glassfish</id>
-			<name>Glassfish repository</name>
-			<url>http://download.java.net/maven/1</url>
-			<layout>legacy</layout>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
 			<id>apache.snapshots</id>
 			<name>Apache Snapshot Repository</name>
 			<url>http://people.apache.org/repo/m2-snapshot-repository</url>
@@ -87,27 +51,6 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-		</repository>
-		<repository>
-			<id>ops4j.repository</id>
-			<name>OPS4J Repository</name>
-			<url>http://repository.ops4j.org/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>Codehaus Snapshots</id>
-			<url>http://snapshots.repository.codehaus.org/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
 		</repository>
 	</repositories>
 	<!-- -->

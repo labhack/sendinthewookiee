@@ -1,4 +1,4 @@
-package martin.utils;
+package org.dayton.wookie;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 
-public class AppTest {
+public class App {
+	/** almost zero, for precision problems */
+	private static final double ALMOST_ZERO = Math.pow(10, -10);
+	private static final int[] PRIORITY = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
 	static double[] teamMember1 = {30, 10, 20};
 	static double[] teamMember2 = {15, 20, 10};
 	static double[] teamMember3 = {50, 40, 25};
@@ -24,6 +26,11 @@ public class AppTest {
 	static final int numberOfTeams = 4;
 	static int minimum = 70;
 	static Random random = new Random();
+
+	public static void main(String[] args) {
+		Steps bestPath = bestPath();
+		System.out.println("Best path: " + StringUtils.join(bestPath) + ", time taken: " + bestPath.getTimeTaken());
+	}
 
 	
 	private static void reinitialize() {
@@ -51,11 +58,6 @@ public class AppTest {
 		
 		
 	}
-	@Test
-	public void labhack() {
-		Steps bestPath = bestPath();
-		System.out.println("Best path: " + StringUtils.join(bestPath) + ", time taken: " + bestPath.getTimeTaken());
-	}
 
 	public static double distanceInAMinute (double value, int times, double original) {
 		return minimum - original - decay(value, times);
@@ -65,7 +67,7 @@ public class AppTest {
 		return Math.pow(value, Math.pow(.95, times));
 	}
 	
-	public Steps bestPath() {
+	public static Steps bestPath() {
 		Steps bestSteps = new Steps();
 		int[] drillsUsedCounts = new int[possibleDrills.size()];
 		for (int i = 0; i < possibleDrills.size(); i++) {
@@ -80,28 +82,35 @@ public class AppTest {
 		return bestSteps;
 	}
 	
-	public int bestDrill(int[] drillsUsedCounts, TeamStatus status) {
+	public static double calculateAverageDistancePerMinute(int drillsUsedCount, int timeForDrill, TeamStatus status, double[][] drill) {
+		double averageDistancePerMinute = 0d;
+
+		for (int j = 0; j < numberOfTeams; j++) {
+			System.out.print("{");
+			for (int k = 0; k < skillsPerTeam; k++) {
+				double[] drillForPosition = drill[j];
+				double skill = drillForPosition[k];
+				double currentDistance = distanceInAMinute(skill, drillsUsedCount, status.teamBySkill[j][k]);
+				averageDistancePerMinute += Math.max(0,  currentDistance *timeForDrill);
+				System.out.printf("%.2f,", distanceInAMinute(skill, drillsUsedCount, status.teamBySkill[j][k]));
+			}
+			System.out.print("}");
+		}
+		
+		return averageDistancePerMinute /= numberOfTeams * skillsPerTeam;
+	}
+	
+	public static int bestDrill(int[] drillsUsedCounts, TeamStatus status) {
 		double lowestDistance = Double.MAX_VALUE;
 		int bestDrill = 0;
 		for (int i = 0; i < possibleDrills.size(); i++) {
 			System.out.print("Drill #: " + i + "{");
-			double averageDistancePerMinute = 0;
-			for (int j = 0; j < numberOfTeams; j++) {
-				System.out.print("{");
-				for (int k = 0; k < skillsPerTeam; k++) {
-					double[] drill = possibleDrills.get(i)[j];
-					double skill = drill[k];
-					double currentDistance = distanceInAMinute(skill, drillsUsedCounts[i], status.teamBySkill[j][k]);
-					averageDistancePerMinute += Math.max(0,  currentDistance * timeForDrill[i]);
-					System.out.printf("%.2f,", distanceInAMinute(skill, drillsUsedCounts[i], status.teamBySkill[j][k]));
-				}
-				System.out.print("}");
-			}
-			averageDistancePerMinute /= numberOfTeams * skillsPerTeam;
+			double averageDistancePerMinute = calculateAverageDistancePerMinute(drillsUsedCounts[i], timeForDrill[i], status, possibleDrills.get(i));
 			System.out.print("}" + averageDistancePerMinute + "\n");
 			// if so, we've found one that will finish the practice, go to special case
-			if (averageDistancePerMinute < Math.pow(10, -10)) {
-				// TODO special end case
+			// sloppy check for 0, since we could have precision problems
+			if (averageDistancePerMinute < ALMOST_ZERO) {
+				return bestEndDrill(drillsUsedCounts, status);
 			}
 			if (averageDistancePerMinute < lowestDistance) {
 //				System.out.println("drill #: " + i + ", averageDistance: " + averageDistancePerMinute);
@@ -110,6 +119,51 @@ public class AppTest {
 			}
 		}
 		System.out.println();
+		return bestDrill;
+	}
+	
+	/**
+	 * For the last step, give them the best we can taking into account their higher priority skills.
+	 */
+	public static int bestEndDrill(int[] drillsUsedCounts, TeamStatus status) {
+		// stub
+		double[][] bestDrillResults = newDrillResult();
+		int[][] bestDrillNumbers = newDrillNumber();
+		for (int i = 0; i < possibleDrills.size(); i++) {
+			double averageDistancePerMinute = calculateAverageDistancePerMinute(drillsUsedCounts[i], timeForDrill[i], status, possibleDrills.get(i));
+			
+			// this is a candidate for the best ending
+			if (averageDistancePerMinute < ALMOST_ZERO) {
+				for (int j = 0; j < numberOfTeams; j++) {
+//					System.out.print("{");
+					for (int k = 0; k < skillsPerTeam; k++) {
+						double[] drillForPosition = possibleDrills.get(i)[j];
+						double skill = drillForPosition[k];
+						double increase = decay(skill, drillsUsedCounts[i]);
+						if (increase > bestDrillResults[j][k] && increase > ALMOST_ZERO) {
+							bestDrillResults[j][k] = increase;
+							bestDrillNumbers[j][k] = i;
+						}
+					}
+//					System.out.print("}");
+				}
+			}
+		}
+
+		int bestDrill = 0;
+
+		for (int i = 0; i < PRIORITY.length; i++) {
+			double bestDrillResult = 0;
+			for (int j = 0; j < numberOfTeams; j++) {
+				for (int k = 0; k < skillsPerTeam; k++) {
+					if (bestDrillResults[j][k] > ALMOST_ZERO && bestDrillResults[j][k] > bestDrillResult) {
+						bestDrill = bestDrillNumbers[j][k];
+						bestDrillResult = bestDrillResults[j][k];
+					}
+				}
+			}
+		}
+
 		return bestDrill;
 	}
 	
@@ -161,6 +215,19 @@ public class AppTest {
 		}
 
 		return drillResult;
+	}
+
+	private static int[][] newDrillNumber() {
+		int[][] drillNumber = new int[numberOfTeams][];
+
+		for (int i = 0; i < numberOfTeams; i++) {
+			drillNumber[i] = new int[skillsPerTeam];
+			for (int j = 0; j < skillsPerTeam; j++) {
+				drillNumber[i][j] = 0;
+			}
+		}
+
+		return drillNumber;
 	}
 	private static class TeamStatus {
 		Double [][] teamBySkill;
